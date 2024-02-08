@@ -55,7 +55,7 @@ const RoomPage = () => {
 
   const hanldeDeleteMessage = async (message) => {
     await deleteMessage(room, message);
-  }
+  };
 
   return (
     <div>
@@ -104,13 +104,16 @@ const RoomPage = () => {
 
                     <div>
                       {message.user.userId === user.profile.userId ? (
-                        <button onClick={() => hanldeDeleteMessage(message)} className="active:scale-95 transition duration-300 ease-in-out">
+                        <button
+                          onClick={() => hanldeDeleteMessage(message)}
+                          className="active:scale-95 transition duration-300 ease-in-out"
+                        >
                           <AiOutlineDelete size={24} />
                         </button>
                       ) : (
                         <></>
                       )}
-                      {timeAgo(message.ceatedAt)}
+                      {timeAgo(message.createdAt)}
                     </div>
                   </div>
 
