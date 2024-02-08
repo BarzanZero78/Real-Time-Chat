@@ -8,7 +8,7 @@ import { useAuth } from "../utils/AuthContext";
 const RoomPage = () => {
   const { roomId } = useParams();
   const { user } = useAuth();
-  const { rooms, getMessages, messages } = useRoom();
+  const { rooms, getMessages, messages, deleteMessage } = useRoom();
   const [room, setRoom] = useState(null);
   const messagesContainerRef = useRef(null);
 
@@ -52,6 +52,10 @@ const RoomPage = () => {
   useEffect(() => {
     getMessages(roomId);
   }, [roomId]);
+
+  const hanldeDeleteMessage = async (message) => {
+    await deleteMessage(room, message);
+  }
 
   return (
     <div>
@@ -100,7 +104,7 @@ const RoomPage = () => {
 
                     <div>
                       {message.user.userId === user.profile.userId ? (
-                        <button className="active:scale-95 transition duration-300 ease-in-out">
+                        <button onClick={() => hanldeDeleteMessage(message)} className="active:scale-95 transition duration-300 ease-in-out">
                           <AiOutlineDelete size={24} />
                         </button>
                       ) : (

@@ -1,6 +1,7 @@
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDocs,
   onSnapshot,
@@ -55,41 +56,54 @@ const RoomsContextProvider = ({ children }) => {
 
   const addMessage = async (room, user, message) => {
     try {
-        const messagesCollection = collection(db, `rooms/${room.id}/messages`);
-        await addDoc(messagesCollection, {
-            user,
-            message,
-            createdAt: new Date(),
-        })
-    } catch(error) {
-        console.log(error.message);
+      const messagesCollection = collection(db, `rooms/${room.id}/messages`);
+      await addDoc(messagesCollection, {
+        user,
+        message,
+        createdAt: new Date(),
+      });
+    } catch (error) {
+      console.log(error.message);
     }
-  }
+  };
+
+  const deleteMessage = async (room, message) => {
+    try {
+      const messagesCollection = collection(db, `rooms/${room.id}/messages`);
+      await deleteDoc(doc(messagesCollection, message.id));
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   const getMessages = async (roomId) => {
     try {
-        const messagesCollection = collection(db, `rooms/${roomId}/messages`);
-        const querySnapshot = onSnapshot(query(messagesCollection, orderBy('createdAt', 'desc')), (snapshot) => {
-            const updatedMessages =  snapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
+      const messagesCollection = collection(db, `rooms/${roomId}/messages`);
+      const querySnapshot = onSnapshot(
+        query(messagesCollection, orderBy("createdAt", "desc")),
+        (snapshot) => {
+          const updatedMessages = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
 
-            setMessages(updatedMessages);
-        });
-
-        return () => {
-            querySnapshot();
+          setMessages(updatedMessages);
         }
-    } catch(error) {
-        console.log(error.message);
+      );
+
+      return () => {
+        querySnapshot();
+      };
+    } catch (error) {
+      console.log(error.message);
     }
-  }
+  };
 
   const contextData = {
     rooms,
     createRoom,
     addMessage,
+    deleteMessage,
     getMessages,
     messages,
   };
